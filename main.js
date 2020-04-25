@@ -2,6 +2,8 @@ document.oncontextmenu = function () { return false }
 
 onchange = function () { }
 Newgame = function () { }
+touchStart = function () { }
+touchEnd = function () { }
 
 $(document).ready(function () {
 
@@ -26,7 +28,8 @@ $(document).ready(function () {
       elements.push({ around: 0, open: false, bomb: false, flag: false, color: 'None' });
     }
     drawMinsweepercell();
-    NewGame.innerHTML=''
+    onchange()
+    NewGame.innerHTML = ''
   }
 
   paper.install(window);
@@ -282,23 +285,6 @@ $(document).ready(function () {
           para1.textContent = 'ゲームクリア';
         }
       }
-    } else if (event.path[0] === mainCanvas) {
-      mouse = true;
-      hundle = setTimeout(tup, 500, event);
-    }
-  }
-
-  onmouseup = function (event) {
-    if (device === 'other' && event.path[0] === mainCanvas) {
-      mouse = false;
-      if (hundle !== '') {
-        this.clearTimeout(hundle);
-      }
-      if (hundle !== '') {
-        let X = Math.floor(event.layerX / cellSize);
-        let Y = Math.floor(event.layerY / cellSize);
-        check(X, Y, 1);
-      }
     }
   }
 
@@ -327,9 +313,30 @@ $(document).ready(function () {
     }
   }
 
+  touchStart = function (event) {
+    if (device === 'other' && event.path[0] === mainCanvas) {
+      mouse = true;
+      hundle = setTimeout(tup, 500, event);
+    }
+  }
+
+  touchEnd = function (event) {
+    if (device === 'other' && event.path[0] === mainCanvas) {
+      mouse = false;
+      if (hundle !== '') {
+        this.clearTimeout(hundle);
+      }
+      if (hundle !== '') {
+        let X = Math.floor((event.changedTouches[0].clientX - event.path[0].offsetLeft) / cellSize);
+        let Y = Math.floor((event.changedTouches[0].clientY - event.path[0].offsetTop) / cellSize);
+        check(X, Y, 1);
+      }
+    }
+  }
+
   function tup(event) {
-    let X = Math.floor(event.layerX / cellSize);
-    let Y = Math.floor(event.layerY / cellSize);
+    let X = Math.floor((event.changedTouches[0].clientX - event.path[0].offsetLeft) / cellSize);
+    let Y = Math.floor((event.changedTouches[0].clientY - event.path[0].offsetTop) / cellSize);
     check(X, Y, 3);
     hundle = '';
   }
