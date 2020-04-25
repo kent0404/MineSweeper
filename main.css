@@ -1,0 +1,41 @@
+.mainCanvasSet {
+   position: relative;
+   width: min(130vh, 180vw);
+   height: min(65vh, 90vw);
+   background-color: black;
+   /* border: solid 3px black; */
+}
+
+.allCenter{
+   width: min(130vh, 180vw);
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.textCenter{
+   text-align: center;
+}
+.buttonRight{
+   margin: 0px 0px 1vh 1vw;
+}
+.p1{
+   display: inline;
+   margin: 0px;
+   position: absolute;
+   left: 20vh;
+}
+
+.p2{
+   display: inline;
+   margin: 0px 0px 0px 0px;
+   top: 0px;
+   bottom: 0px;
+   right: 20vh;
+   position: absolute;
+}
+
+#box{
+   position: relative;
+   width: min(130vh, 180vw);
+   height: 2rem;
+}

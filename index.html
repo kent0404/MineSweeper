@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>マインスイーパー</title>
+  <link rel="stylesheet" href="main.css">
+  <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.10.2/paper-full.min.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+</head>
+
+<body>
+  <div class="allCenter" id="content">
+    <h1 class="textCenter">マインスイーパー</h1>
+    <p class="textCenter" id='rule'>左クリックで開く、右クリックで旗設置</p>  
+    <div id="box">
+      <p class="p1" id="flag">残り🏴： </p>
+      <p class="p2" onchange="onchange">
+        <input type="radio" name="bool" value="pc" id="v1" checked>
+        <label for="v1">パソコン</label>
+        <input type="radio" name="bool" value="other" id="v2">
+        <label for="v2">スマホ</label>
+      </p>
+    </div>
+    <canvas id="mainCanvas" class="mainCanvasSet"></canvas>
+    <div id="NewGame" class="textCenter"></div>
+  </div>
+</body>
+</html>
