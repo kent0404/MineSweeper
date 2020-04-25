@@ -156,9 +156,27 @@ $(document).ready(function () {
           text.content = 'P';
         }
         break;
-      case 'bomb':
+      case 'bombBack':
         cellColor = 'red';
         rectangle = true;
+        break;
+      case 'bomb':
+        drawCell(X, Y, 'bombBack')
+        if (true) {
+          let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.2);
+          text.justification = 'center';
+          text.fontSize = cellSize * 0.8;
+          text.content = '💣';
+        }
+        break;
+      case 'flower':
+        drawCell(X, Y, 'None')
+        if (true) {
+          let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.2);
+          text.justification = 'center';
+          text.fontSize = cellSize * 0.8;
+          text.content = '🌷';
+        }
         break;
     }
     if (rectangle) {
@@ -184,7 +202,7 @@ $(document).ready(function () {
             drawCell(X, Y, 'bomb');
             in二次元配列(X, Y, 'color', 'bomb');
             para1.textContent = 'ゲームオーバー';
-            bomb_爆発();
+            bomb_爆発(true);
             NewGame.innerHTML = '<input type="button" value="New Game" onClick="Newgame()">'
           } else {
             open(X, Y)
@@ -254,11 +272,15 @@ $(document).ready(function () {
     }
   }
 
-  function bomb_爆発() {
+  function bomb_爆発(boon) {
     for (let i = 0; i < cell数縦; i++) {
       for (let j = 0; j < cell数横; j++) {
         if (out二次元配列(j, i, 'bomb')) {
-          drawCell(j, i, 'bomb');
+          if (boon) {
+            drawCell(j, i, 'bomb');
+          } else {
+            drawCell(j, i, 'flower');
+          }
           in二次元配列(j, i, 'color', 'bomb');
           in二次元配列(j, i, 'open', true)
         } else {
@@ -283,6 +305,8 @@ $(document).ready(function () {
         check(X, Y, button);
         if (opened >= cell数縦 * cell数横 - bomb数) {
           para1.textContent = 'ゲームクリア';
+          bomb_爆発(false);
+          NewGame.innerHTML = '<input type="button" value="New Game" onClick="Newgame()">'
         }
       }
     }
