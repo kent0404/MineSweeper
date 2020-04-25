@@ -6,7 +6,9 @@ touchStart = function () { }
 touchEnd = function () { }
 
 $(document).ready(function () {
-
+  paper.install(window);
+  paper.setup(document.getElementById('mainCanvas'));
+  
   onchange = function () {
     if (document.getElementById('v1').checked) {
       device = 'pc'
@@ -16,7 +18,7 @@ $(document).ready(function () {
       document.getElementById('rule').textContent = 'タップで開く、旗撤去、長押しで旗設置'
     }
   }
-
+  
   Newgame = function () {
     elements = [];
     X記憶 = -1;
@@ -31,10 +33,7 @@ $(document).ready(function () {
     onchange()
     NewGame.innerHTML = ''
   }
-
-  paper.install(window);
-  paper.setup(document.getElementById('mainCanvas'));
-
+  
   let device = 'other';
   const cell数横 = 30;
   const bomb数 = 100;
@@ -48,7 +47,7 @@ $(document).ready(function () {
   }
   onchange();
   const cellSize = length横 / cell数横;
-
+  
   let elements = [];
   const around = [[1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1]];
   let X記憶 = -1;
@@ -60,17 +59,17 @@ $(document).ready(function () {
   let paraFlag = document.getElementById('flag');
   let NewGame = document.getElementById('NewGame');
   paraFlag.textContent = '残り🏴：' + bomb数
-
+  
   function out二次元配列(X, Y, 出すもの) {
     if (0 <= X && X < cell数横 && 0 <= Y && Y < cell数縦) {
       switch (出すもの) {
         case 'around':
           return elements[X + Y * cell数横].around;
-        case 'open':
+          case 'open':
           return elements[X + Y * cell数横].open;
         case 'bomb':
           return elements[X + Y * cell数横].bomb;
-        case 'flag':
+          case 'flag':
           return elements[X + Y * cell数横].flag;
         case 'color':
           return elements[X + Y * cell数横].color;
@@ -92,7 +91,7 @@ $(document).ready(function () {
         case 'bomb':
           elements[X + Y * cell数横].bomb = value;
           break;
-        case 'flag':
+          case 'flag':
           elements[X + Y * cell数横].flag = value;
           break;
         case 'color':
@@ -184,7 +183,7 @@ $(document).ready(function () {
       drawRectangle(X * cellSize + 0.5, Y * cellSize + 0.5, cellSize - 1, cellSize - 1, cellColor);
     }
   }
-
+  
   function check(X, Y, button) {
     if (out二次元配列(X, Y, 'open') === false) {
       if (button === 1) {
