@@ -4,72 +4,49 @@ onchange = function () { }
 Newgame = function () { }
 touchStart = function () { }
 touchEnd = function () { }
+DifficultChange = function () { }
+SizeChange = function () { }
 
 $(document).ready(function () {
   paper.install(window);
+  paper.setup(document.getElementById('subCanvas'));
+  let midiumLength = subCanvas.width;
+  if (midiumLength === 0) {
+    midiumLength = subCanvas.style.width;
+  }
   paper.setup(document.getElementById('mainCanvas'));
-  
-  onchange = function () {
-    if (document.getElementById('v1').checked) {
-      device = 'pc'
-      document.getElementById('rule').textContent = '左クリックで開く、右クリックで旗設置、旗撤去'
-    } else {
-      device = 'other'
-      document.getElementById('rule').textContent = 'タップで開く、旗撤去、長押しで旗設置'
-    }
-  }
-  
-  Newgame = function () {
-    elements = [];
-    X記憶 = -1;
-    Y記憶 = -1;
-    opened = 0;
-    putFlags = 0;
-    paraFlag.textContent = '残り🏴：' + bomb数;
-    for (let i = 0; i < cell数横 * cell数縦; i++) {
-      elements.push({ around: 0, open: false, bomb: false, flag: false, color: 'None' });
-    }
-    drawMinsweepercell();
-    onchange()
-    NewGame.innerHTML = ''
-  }
-  
+
   let device = 'other';
-  const cell数横 = 30;
-  const bomb数 = 100;
-  const cell数縦 = cell数横 / 2;
-  let length横 = Number(mainCanvas.style.width.substr(0, mainCanvas.style.width.length - 2));
-  document.getElementById('v2').checked = true;
-  if (length横 === 0) {
-    length横 = Number(mainCanvas.width);
-    document.getElementById('v1').checked = true;
-    device = 'pc';
-  }
-  onchange();
-  const cellSize = length横 / cell数横;
-  
-  let elements = [];
   const around = [[1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1]];
-  let X記憶 = -1;
-  let Y記憶 = -1;
-  let opened = 0;
-  let putFlags = 0;
+
+  let cell数横;
+  let cell数縦;
+  let bomb数;
+  let length;
+  let cellSize;
+  let elements;
+  let X記憶;
+  let Y記憶;
+  let opened;
+  let putFlags;
   let hundle;
   let para1 = document.getElementsByTagName('p')[0];
   let paraFlag = document.getElementById('flag');
   let NewGame = document.getElementById('NewGame');
-  paraFlag.textContent = '残り🏴：' + bomb数
-  
+  let canvas = document.getElementById('mainCanvas');
+  let selected = 'nomal'
+
+
   function out二次元配列(X, Y, 出すもの) {
     if (0 <= X && X < cell数横 && 0 <= Y && Y < cell数縦) {
       switch (出すもの) {
         case 'around':
           return elements[X + Y * cell数横].around;
-          case 'open':
+        case 'open':
           return elements[X + Y * cell数横].open;
         case 'bomb':
           return elements[X + Y * cell数横].bomb;
-          case 'flag':
+        case 'flag':
           return elements[X + Y * cell数横].flag;
         case 'color':
           return elements[X + Y * cell数横].color;
@@ -91,7 +68,7 @@ $(document).ready(function () {
         case 'bomb':
           elements[X + Y * cell数横].bomb = value;
           break;
-          case 'flag':
+        case 'flag':
           elements[X + Y * cell数横].flag = value;
           break;
         case 'color':
@@ -102,9 +79,10 @@ $(document).ready(function () {
   }
 
   function drawMinsweepercell() {
+    drawRectangle(0, 0, length, length / 2, 'black')
     for (let i = 0; i < cell数縦; i++) {
       for (let j = 0; j < cell数横; j++) {
-        drawCell(j, i, 'None');
+        drawCell(j, i, out二次元配列(j, i, 'color'))
       }
     }
   }
@@ -116,7 +94,7 @@ $(document).ready(function () {
   }
 
   function drawCell(X, Y, color) {
-    let cellColor
+    let cellColor;
     let rectangle;
     switch (color) {
       case 'None':
@@ -133,12 +111,12 @@ $(document).ready(function () {
         break;
       case 'open':
         rectangle = false;
-        drawCell(X, Y, 'openBack')
+        drawCell(X, Y, 'openBack');
         if (true) {
           let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.1);
           text.justification = 'center';
           text.fontSize = cellSize;
-          text.fillColor = 'black'
+          text.fillColor = 'black';
           if (out二次元配列(X, Y, 'around') !== 0) {
             text.content = out二次元配列(X, Y, 'around');
           }
@@ -146,13 +124,27 @@ $(document).ready(function () {
         break;
       case 'flag':
         rectangle = false;
-        drawCell(X, Y, 'None')
+        drawCell(X, Y, 'None');
         if (true) {
           let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.1);
           text.justification = 'center';
           text.fontSize = cellSize;
-          text.fillColor = "rgb(255,0,0)"
+          text.fillColor = "red";
           text.content = 'P';
+        }
+        break;
+      case 'missFlagBack':
+        cellColor = 'purple';
+        rectangle = true;
+        break;
+      case 'missFlag':
+        drawCell(X, Y, 'missFlagBack');
+        if (true) {
+          let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.1);
+          text.justification = 'center';
+          text.fontSize = cellSize;
+          text.fillColor = "black";
+          text.content = 'X';
         }
         break;
       case 'bombBack':
@@ -160,7 +152,7 @@ $(document).ready(function () {
         rectangle = true;
         break;
       case 'bomb':
-        drawCell(X, Y, 'bombBack')
+        drawCell(X, Y, 'bombBack');
         if (true) {
           let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.2);
           text.justification = 'center';
@@ -169,7 +161,7 @@ $(document).ready(function () {
         }
         break;
       case 'flower':
-        drawCell(X, Y, 'None')
+        drawCell(X, Y, 'None');
         if (true) {
           let text = new PointText(X * cellSize + cellSize / 2, (Y + 1) * cellSize - cellSize * 0.2);
           text.justification = 'center';
@@ -183,7 +175,7 @@ $(document).ready(function () {
       drawRectangle(X * cellSize + 0.5, Y * cellSize + 0.5, cellSize - 1, cellSize - 1, cellColor);
     }
   }
-  
+
   function check(X, Y, button) {
     if (out二次元配列(X, Y, 'open') === false) {
       if (button === 1) {
@@ -202,9 +194,9 @@ $(document).ready(function () {
             in二次元配列(X, Y, 'color', 'bomb');
             para1.textContent = 'ゲームオーバー';
             bomb_爆発(true);
-            NewGame.innerHTML = '<input type="button" value="New Game" onClick="Newgame()">'
+            NewGame.innerHTML = '<input type="button" value="New Game" onClick="Newgame()">';
           } else {
-            open(X, Y)
+            open(X, Y);
           }
         }
       } else {
@@ -219,7 +211,7 @@ $(document).ready(function () {
           in二次元配列(X, Y, 'color', 'flag');
           putFlags++;
         } else {
-          alert('もう旗がありません')
+          alert('もう旗がありません');
         }
       }
       paraFlag.textContent = '残り🏴：' + (bomb数 - putFlags);
@@ -232,8 +224,8 @@ $(document).ready(function () {
     in二次元配列(X, Y, 'color', 'open');
     if (out二次元配列(X, Y, 'around') === 0) {
       for (let i = 0; i < around.length; i++) {
-        if (out二次元配列(X + around[i][0], Y + around[i][1], 'open') === false) {
-          open(X + around[i][0], Y + around[i][1])
+        if (out二次元配列(X + around[i][0], Y + around[i][1], 'open') === false &&out二次元配列(X + around[i][0], Y + around[i][1], 'flag') === false) {
+          open(X + around[i][0], Y + around[i][1]);
         }
       }
     }
@@ -274,26 +266,95 @@ $(document).ready(function () {
   function bomb_爆発(boon) {
     for (let i = 0; i < cell数縦; i++) {
       for (let j = 0; j < cell数横; j++) {
-        if (out二次元配列(j, i, 'bomb')) {
+        if (out二次元配列(j, i, 'flag')) {
+          drawCell(j, i, 'missFlag');
+        } else if (out二次元配列(j, i, 'bomb')) {
           if (boon) {
             drawCell(j, i, 'bomb');
           } else {
             drawCell(j, i, 'flower');
           }
           in二次元配列(j, i, 'color', 'bomb');
-          in二次元配列(j, i, 'open', true)
-        } else {
-          in二次元配列(j, i, 'open', true);
-        }
+        } 
+        in二次元配列(j, i, 'open', true);
       }
     }
   }
 
-  drawMinsweepercell();
-
-  for (let i = 0; i < cell数横 * cell数縦; i++) {
-    elements.push({ around: 0, open: false, bomb: false, flag: false, color: 'None' });
+  onchange = function () {
+    if (document.getElementById('v1').checked) {
+      device = 'pc';
+      document.getElementById('rule').textContent = '左クリックで開く、右クリックで旗設置、旗撤去'
+    } else {
+      device = 'other';
+      document.getElementById('rule').textContent = 'タップで開く、旗撤去、長押しで旗設置'
+    }
   }
+
+  Newgame = function () {
+    if (selected === 'easy') {
+      cell数横 = 20;
+      cell数縦 = cell数横 / 2;
+      bomb数 = 30;
+    } else if (selected === 'nomal') {
+      cell数横 = 30;
+      cell数縦 = cell数横 / 2;
+      bomb数 = 90;
+    } else if (selected === 'hard') {
+      cell数横 = 40;
+      cell数縦 = cell数横 / 2;
+      bomb数 = 240;
+    }
+
+    cellSize = length / cell数横;
+    elements = [];
+    X記憶 = -1;
+    Y記憶 = -1;
+    opened = 0;
+    putFlags = 0;
+    paraFlag.textContent = '残り🏴：' + bomb数;
+    for (let i = 0; i < cell数横 * cell数縦; i++) {
+      elements.push({ around: 0, open: false, bomb: false, flag: false, color: 'None' });
+    }
+    drawMinsweepercell();
+    onchange();
+    SizeChange();
+    NewGame.innerHTML = '';
+  }
+
+  DifficultChange = function () {
+    if (confirm('難易度を変えるとリセットされます')) {
+      if (document.getElementById('easy').selected) {
+        selected = 'easy';
+      } else if (document.getElementById('nomal').selected) {
+        selected = 'nomal';
+      } else if (document.getElementById('hard').selected) {
+        selected = 'hard';
+      }
+      Newgame();
+    } else {
+      document.getElementById(selected).selected = true;
+    }
+  }
+
+  SizeChange = function () {
+    if (document.getElementById('small').selected) {
+      canvas.setAttribute("width", midiumLength * 0.5.toString());
+      canvas.setAttribute("height", midiumLength * 0.25.toString());
+      cellSize = midiumLength * 0.5 / cell数横;
+    } else if (document.getElementById('midium').selected) {
+      canvas.setAttribute("width", midiumLength.toString());
+      canvas.setAttribute("height", midiumLength * 0.5.toString());
+      cellSize = midiumLength / cell数横;
+    } else if (document.getElementById('large').selected) {
+      canvas.setAttribute("width", midiumLength / 0.5.toString());
+      canvas.setAttribute("height", midiumLength.toString());
+      cellSize = midiumLength * 2 / cell数横;
+    }
+    drawMinsweepercell();
+  }
+
+  Newgame();
 
   onmousedown = function (event) {
     if (device === 'pc') {
@@ -305,7 +366,7 @@ $(document).ready(function () {
         if (opened >= cell数縦 * cell数横 - bomb数) {
           para1.textContent = 'ゲームクリア';
           bomb_爆発(false);
-          NewGame.innerHTML = '<input type="button" value="New Game" onClick="Newgame()">'
+          NewGame.innerHTML = '<input type="button" value="New Game" onClick="Newgame()">';
         }
       }
     }
@@ -329,7 +390,9 @@ $(document).ready(function () {
           Y記憶 = Y;
         }
       } else {
-        drawCell(X記憶, Y記憶, out二次元配列(X記憶, Y記憶, 'color'));
+        if (X記憶 >= 0 || Y記憶 >= 0) {
+          drawCell(X記憶, Y記憶, out二次元配列(X記憶, Y記憶, 'color'));
+        }
         X記憶 = -1;
         Y記憶 = -1;
       }

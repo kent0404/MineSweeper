@@ -15,8 +15,24 @@
     <h1 class="textCenter">マインスイーパー</h1>
     <p class="textCenter" id='rule'>左クリックで開く、右クリックで旗設置</p>  
     <div id="box">
-      <p class="p1" id="flag">残り🏴： </p>
-      <p class="p2" onchange="onchange">
+      <p id="flag">残り🏴： </p>
+      <p id="menu1">
+        難易度：
+        <select name="difficulit" onchange="DifficultChange()">
+          <option id="easy">低</option>
+          <option id="nomal"selected>中</option>
+          <option id="hard">高</option>
+        </select>
+      </p>
+      <p id="menu2">
+        サイズ：
+        <select name="size" onchange="SizeChange()">
+          <option id="small">小</option>
+          <option id="midium"selected>中</option>
+          <option id="large">大</option>
+        </select>
+      </p>
+      <p id="radio" onchange="onchange">
         <input type="radio" name="bool" value="pc" id="v1" checked>
         <label for="v1">パソコン</label>
         <input type="radio" name="bool" value="other" id="v2">
@@ -25,6 +41,7 @@
     </div>
     <canvas id="mainCanvas" class="mainCanvasSet" ontouchstart="touchStart(event)" ontouchend="touchEnd(event)"></canvas>
     <div id="NewGame" class="textCenter"></div>
+    <canvas id="subCanvas"></canvas>
   </div>
 </body>
 </html>

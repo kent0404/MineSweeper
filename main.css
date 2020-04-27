@@ -1,9 +1,6 @@
 .mainCanvasSet {
    position: relative;
-   width: min(130vh, 180vw);
-   height: min(65vh, 90vw);
    background-color: black;
-   /* border: solid 3px black; */
 }
 
 .allCenter{
@@ -15,22 +12,31 @@
 .textCenter{
    text-align: center;
 }
-.buttonRight{
-   margin: 0px 0px 1vh 1vw;
-}
-.p1{
+#flag{
    display: inline;
    margin: 0px;
    position: absolute;
-   left: 20vh;
+   left: 5vw;
 }
 
-.p2{
+#radio{
    display: inline;
-   margin: 0px 0px 0px 0px;
-   top: 0px;
-   bottom: 0px;
-   right: 20vh;
+   margin: 0px;
+   position: absolute;
+   right: 5vh;
+}
+
+#menu1{
+   display: inline;
+   margin: 0px;
+   right: min(68vh, 92vw);
+   position: absolute;
+}
+
+#menu2{
+   display: inline;
+   margin: 0px;
+   left: min(68vh, 92vw);
    position: absolute;
 }
 
@@ -38,4 +44,9 @@
    position: relative;
    width: min(130vh, 180vw);
    height: 2rem;
+}
+
+#subCanvas{
+   width: min(130vh, 180vw);
+   height: 10px;
 }
