@@ -266,16 +266,18 @@ $(document).ready(function () {
   function bomb_爆発(boon) {
     for (let i = 0; i < cell数縦; i++) {
       for (let j = 0; j < cell数横; j++) {
-        if (out二次元配列(j, i, 'flag')) {
-          drawCell(j, i, 'missFlag');
-        } else if (out二次元配列(j, i, 'bomb')) {
+        if (out二次元配列(j, i, 'bomb')) {
           if (boon) {
             drawCell(j, i, 'bomb');
           } else {
             drawCell(j, i, 'flower');
           }
           in二次元配列(j, i, 'color', 'bomb');
-        } 
+        } else{
+          if (out二次元配列(j,i,'flag')){
+            drawCell(j,i,'missFlag');
+          }
+        }
         in二次元配列(j, i, 'open', true);
       }
     }
